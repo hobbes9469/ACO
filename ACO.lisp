@@ -130,19 +130,8 @@
   (- (+ x2 y2) (+ x1 y1)))          ; Difference between coord sum of candidate and coord sum of ant position   
 
 
-; Method to calculate heuristic value of a coordinate pair
-; STILL WORKING ON~~~
-(defmethod heur (Ant)
-  (let ((R (/ (- (random 161) 80) 100))   ; Random fuzzing value
-        (SK 0.1)                          ; Scent balancing factor
-        (food (ant-food Ant))             ; "Food Found" flag for ant
-        (M)                               ; Mode value, to be determined later
-        )
-    (list R SK food M)))
-
-
-; THIS WILL REPLACE THE "heur" METHOD
-(defun heur2 (ant cx cy)
+; Function to calculate heuristic value of a candidate point
+(defun heur (ant cx cy)
   (let ((R (/ (- (random 161) 80) 100))   ; Random fuzzing value
         (SK 0.1)                          ; Scent balancing factor
         (food (ant-food ant))             ; "Food Found" flag for ant
@@ -200,13 +189,10 @@
 
 
 
-(print (movelist ant0))
-(print (ant-food ant0))
-(print (heur ant0))
-(print (heur2 ant0 0 1))
 
-(print (getscent 0 0))
-(print (deltamax 1 3 0 9))
+(print (heur ant0 0 1))
+
+
 
 ; TODO: New method for Ant class, MOVE ant
 
