@@ -118,6 +118,16 @@
     ))
 
 
+; Method to have the ant take one step on the 
+; coordinate with the best heuristic
+(defmethod antstep (Ant)
+  (let ((next (bestsquare Ant)))
+    (setf (ant-tabu Ant) (append (ant-tabu Ant) (list (ant-x Ant) (ant-y Ant))))
+    (setf (ant-x Ant) (nth 0 next))
+    (setf (ant-y Ant) (nth 1 next))))
+
+
+
 ; Function deltamax for heuristic method when the ant is foraging
 ; (x1 y1) is the ant's coordinate and (x2 y2) is the candidate coordinate
 (defun deltamax (x1 y1 x2 y2)
@@ -146,14 +156,10 @@
 ; Function that takes an Ant and returns the best square
 ; to move to based on heuristic values~~~STILL WORKING ON~~~
 (defun bestsquare (ant)
-  (let ((ml (movelist ant))
-        (hl '()))
+  (let ((ml (movelist ant))             ; Ant's possible candidate moves
+        (hl '()))                       ; List of heuristic values for the movelist
     (loop for m in ml
           do (setq hl (append hl (list (heur ant (nth 0 m) (nth 1 m))))))
-    (loop for n from 0 to (- (length ml) 1)
-          do (format t "MOVE: ~S , HEUR: ~D~%" (nth n ml) (nth n hl)))
-    (print (position (apply 'max hl) hl))
-    (print (nth (position (apply 'max hl) hl) ml))
     (nth (position (apply 'max hl) hl) ml)))
 
 
@@ -199,10 +205,11 @@
 
 
 
-(print (heur ant0 0 1))
-(terpri)
-(print (bestsquare ant0))
-
+(print (ant-x ant0))
+(print (ant-y ant0))
+(antstep ant0)
+(print (ant-x ant0))
+(print (ant-y ant0))
 
 ; TODO: New method for Ant class, MOVE ant
 
