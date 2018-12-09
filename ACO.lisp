@@ -140,18 +140,21 @@
     (if (equal food NIL)                                     ; If food flag is NIL...
         (setq M (deltamax (ant-x ant) (ant-y ant) cx cy))    ; Use deltamax as Mode
         (setq M (deltasum (ant-x ant) (ant-y ant) cx cy)))   ; Else, use delta sum as Mode
-    (+ M (* SK (getscent cx cy)) R)))
+    (+ M (* SK (getscent cx cy)) R)))               ; Return the result of the heuristic formula
 
 
-
-; Creating an ant
-(defvar ant0)
-
-(setq ant0 (make-instance 'ant
-                          :x 0 :y 0))   ; Initialize x and y to (0 0)
-(setf (ant-tabu ant0) '())              ; Initialize tabu with empty list
-(setf (ant-food ant0) NIL)              ; Initialize food flag to NIL
-
+; Function that takes an Ant and returns the best square
+; to move to based on heuristic values~~~STILL WORKING ON~~~
+(defun bestsquare (ant)
+  (let ((ml (movelist ant))
+        (hl '()))
+    (loop for m in ml
+          do (setq hl (append hl (list (heur ant (nth 0 m) (nth 1 m))))))
+    (loop for n from 0 to (- (length ml) 1)
+          do (format t "MOVE: ~S , HEUR: ~D~%" (nth n ml) (nth n hl)))
+    (print (position (apply 'max hl) hl))
+    (print (nth (position (apply 'max hl) hl) ml))
+    (nth (position (apply 'max hl) hl) ml)))
 
 
 ; Function to return list of possible orthogonal moves from (x y)
@@ -163,7 +166,6 @@
     (setq possible (append possible (list (list (+ x 1) y))))
     (setq possible (append possible (list (list x (+ y 1)))))
     possible))                                                 ; Return the list of orthogonal moves
-
 
 
 ; Function to check if move is valid (using boundary rules and 'X' on grid)
@@ -186,12 +188,20 @@
   (nth x (nth y scent)))
 
 
+; ---------------
+; Creating an ant
+(defvar ant0)
 
+(setq ant0 (make-instance 'ant
+                          :x 0 :y 0))   ; Initialize x and y to (0 0)
+(setf (ant-tabu ant0) '())              ; Initialize tabu with empty list
+(setf (ant-food ant0) NIL)              ; Initialize food flag to NIL
 
 
 
 (print (heur ant0 0 1))
-
+(terpri)
+(print (bestsquare ant0))
 
 
 ; TODO: New method for Ant class, MOVE ant
