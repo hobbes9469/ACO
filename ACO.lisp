@@ -122,8 +122,8 @@
 ; coordinate with the best heuristic
 (defmethod antstep (Ant)
   (let ((next (bestsquare Ant)))
-    (setf (ant-tabu Ant) (append (ant-tabu Ant) (list (ant-x Ant) (ant-y Ant))))
-    (setf (ant-x Ant) (nth 0 next))
+    (setf (ant-tabu Ant) (append (list (list (ant-x Ant) (ant-y Ant))) (ant-tabu Ant)))  ; Add current square to top of path history
+    (setf (ant-x Ant) (nth 0 next))         ; Set current ant x and y coordinates to the next x and y coordinates
     (setf (ant-y Ant) (nth 1 next))))
 
 
@@ -205,13 +205,21 @@
 
 
 
-(print (ant-x ant0))
-(print (ant-y ant0))
-(antstep ant0)
-(print (ant-x ant0))
-(print (ant-y ant0))
 
-; TODO: New method for Ant class, MOVE ant
 
+
+(format t "(x, y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
+
+
+(defvar steps 10)
+(loop while (/= steps 0)
+      do (antstep ant0)
+         (format t "(X, Y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
+         (setq steps (- steps 1)))
+
+
+
+; TODO: Implement avoiding the last T = 8 Tabu cells for the ant
+;       Otherwise, the ant will get stuck around (4 8)
 
 
