@@ -212,6 +212,9 @@
 
 
 (defvar steps 10)
+
+(setq steps 10)
+
 (loop while (/= steps 0)
       do (antstep ant0)
          (format t "(X, Y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
@@ -221,5 +224,5 @@
 
 ; TODO: Implement avoiding the last T = 8 Tabu cells for the ant
 ;       Otherwise, the ant will get stuck around (4 8)
-
+;       Probably should be done in the "bestsquare" function
 
