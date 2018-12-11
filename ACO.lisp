@@ -156,11 +156,21 @@
 ; Function that takes an Ant and returns the best square
 ; to move to based on heuristic values~~~STILL WORKING ON~~~
 (defun bestsquare (ant)
-  (let ((ml (movelist ant))             ; Ant's possible candidate moves
-        (hl '()))                       ; List of heuristic values for the movelist
-    (loop for m in ml
-          do (setq hl (append hl (list (heur ant (nth 0 m) (nth 1 m))))))
-    (nth (position (apply 'max hl) hl) ml)))
+  (let ((ml (movelist ant))         ; Ant's possible candidate moves
+        (hl '())                    ; List of heuristic values for the movelist
+        (tabu '())                  ; Last 8 squares of ant's path to avoid
+        (fml '()))                  ; Final move list with tabu squares removed
+    (if (<= 8 (length (ant-tabu ant)))            ; Set the tabu list
+        (setq tabu (subseq (ant-tabu ant) 0 8))
+        (setq tabu (ant-tabu ant)))
+    (loop for m in ml                               ; For each square on the movelist
+         do (if (not (member m tabu :test 'equal))  ; if it is not in the tabu list
+                (setq fml (append (list m) fml))))  ; add to final move list
+    (if (equal 0 (length fml))         ; If final move list is empty
+        (setq fml ml))                 ; change final move list to current move list (ignore tabu)
+    (loop for f in fml                                                      ; For each square on the final move list
+          do (setq hl (append hl (list (heur ant (nth 0 f) (nth 1 f))))))   ; Apply heuristics and save
+    (nth (position (apply 'max hl) hl) fml)))                               ; Return the move with the highest heuristic value
 
 
 ; Function to return list of possible orthogonal moves from (x y)
@@ -211,9 +221,10 @@
 (format t "(x, y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
 
 
-(defvar steps 10)
+(defvar steps 10000)
 
-(setq steps 10)
+(setq steps 10000)
+
 
 (loop while (/= steps 0)
       do (antstep ant0)
