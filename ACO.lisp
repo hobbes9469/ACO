@@ -226,27 +226,9 @@
 (setf (ant-food ant0) NIL)              ; Initialize food flag to NIL
 
 
+(defvar steps)
+(setq steps 100)
 
-
-(format t "(x, y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
-
-
-;(defvar steps 100)
-
-;(setq steps 100)
-
-
-(;loop while (/= steps 0)
-     ; do (antstep ant0)
-         ;(format t "(X, Y): (~D, ~D)~%" (ant-x ant0) (ant-y ant0))
-         ;(setq steps (- steps 1))
- )
-
-
-(setf (nth 0 antlist) (make-instance 'Ant :x 0
-                                          :y 0))
-(setf (ant-tabu (nth 0 antlist)) '())
-(setf (ant-food (nth 0 antlist)) NIL)
 
 
 
@@ -257,15 +239,24 @@
   (loop for a in antlist                   ; For each ant in the list, if it exists, deposit scent if it has food
         do (if (and (equal (type-of a) 'ANT) (equal (ant-food a) T))
                (depositscent (ant-x a) (ant-y a))))
-  (scentzero)
-  (loop for x from 0 to 59
+  (scentzero)                              ; Zero out scents
+  (loop for x from 0 to 59                 ; Evaporate scents
         do (loop for y from 0 to 39
                  do (scentevap x y)))
+  (if (<= antcounter 49)
+      (progn
+        (setf (nth antcounter antlist) (make-instance 'ANT :x 0 :y 0))
+        (setf (ant-tabu (nth antcounter antlist)) '())
+        (setf (ant-food (nth antcounter antlist)) NIL)
+        (setq antcounter (+ antcounter 1))))
+  (loop for a in antlist
+        do (if (and (equal (type-of a) 'ANT) (equal (ant-x a) 59) (equal (ant-y a) 39))
+               (setf (ant-food a) T)))
+  (format t "ANT1 - X: ~D, Y: ~D, FOOD: ~S~%" (ant-x (nth 0 antlist)) (ant-y (nth 0 antlist)) (ant-food (nth 0 antlist)))
   )
 
 
 
 
-
-; TODO: Start to structure the iteration skeleton
-;       starting with antstep, 
+; TODO: Initialize each ant in the antlist to a new class,
+;       and transfer to iteration when complete
